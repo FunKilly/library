@@ -2,7 +2,7 @@ from invoke import task
 
 LINE_LENGTH = "90"
 
-PATHS = ["carsapp"]
+PATHS = ["books", "tests", "library"]
 EXCLUDE = ["*/migrations/*"]
 
 
