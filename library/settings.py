@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "books.apps.BooksConfig",
     # Third party apps
     "crispy_forms",
+    'django_filters',
 ]
 
 MIDDLEWARE = [

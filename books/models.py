@@ -24,7 +24,7 @@ class Book(models.Model):
     title = models.CharField(max_length=60, blank=False, null=False)
     author = models.ForeignKey(Author, on_delete=models.PROTECT)
     publication_date = models.DateField(blank=False, null=False)
-    isbn = models.CharField(blank=False, null=False, max_length=13, unique=True)
+    isbn = models.CharField(blank=False, null=False, max_length=20, unique=True)
     page_count = models.IntegerField()
     cover_photo = models.URLField(max_length=200)
     publication_language = models.CharField(max_length=10)
@@ -33,3 +33,5 @@ class Book(models.Model):
 
     def __str__(self):
         return f'"{self.title}" by {self.author}'
+
+

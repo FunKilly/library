@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.urls import path
 
-from books.views import BookListView, RESTBookListView, BookCreateView, BookUpdateView, BookDeleteView
+from books.views import (
+    BookCreateView,
+    BookDeleteView,
+    BookListView,
+    BookUpdateView,
+    RESTBookListView,
+)
 
 urlpatterns = [
     path("api/books", RESTBookListView.as_view(), name="rest-book-list"),
