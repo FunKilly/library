@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Local
     "books.apps.BooksConfig",
+    # Third party apps
+    "crispy_forms",
 ]
 
 MIDDLEWARE = [
@@ -145,3 +147,5 @@ MEDIA_URL = os.environ.get(
 STATIC_URL = os.environ.get(
     "STATIC_URL", default=str(pathlib.Path(PUBLIC_ROOT, "static")) + "/"
 )
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"

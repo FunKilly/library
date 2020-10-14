@@ -11,6 +11,7 @@ autoflake==1.4            # via -r requirements.in
 black==19.10b0            # via -r requirements.in
 click==7.1.2              # via black
 dj_database_url==0.5.0    # via -r requirements.in
+django-crispy-forms==1.9.2  # via -r requirements.in
 django-filter==2.4.0      # via -r requirements.in
 django==3.0.4             # via -r requirements.in, django-filter, djangorestframework
 djangorestframework==3.11.0  # via -r requirements.in
