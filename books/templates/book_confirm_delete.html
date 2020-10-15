@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 {% block content %}
-    <form method="post">{% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
         <div class="alert alert-danger" role="alert">
             Are you sure you want to delete book
             {{ object }}?

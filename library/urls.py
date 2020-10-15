@@ -22,8 +22,8 @@ from books.views import (
     BookSearchResultsImportView,
     BookSearchView,
     BookUpdateView,
+    IndexView,
     RESTBookListView,
-    IndexView
 )
 
 urlpatterns = [

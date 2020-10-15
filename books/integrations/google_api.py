@@ -47,11 +47,11 @@ def parse_response(response):
             continue
 
         book_record = {
-            "title": record["title"],
-            "authors": ", ".join(record.get("authors", ["No info"])),
+            "title": record["title"][:200],
+            "authors": ", ".join(record.get("authors", "")),
             "publication_date": record["publishedDate"],
             "publication_language": record.get("language", "No info"),
-            "cover_photo_url": record.get("imageLinks"),
+            "cover_photo_url": record.get("imageLinks", ""),
             "page_count": record.get("pageCount"),
         }
 

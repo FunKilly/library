@@ -11,25 +11,17 @@ from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .filters import ApiBookFilter, BookFilter
-from .forms import BookForm
+from .forms import BookCreateForm, BookSearchForm, BookUpdateForm
 from .integrations import google_api
 from .models import Book
-from .serializers import (
-    BookCreateSerializer,
-    BookListSerializer,
-    SearchBookResultsListSerializer,
-    SearchBookSerializer,
-)
+from .serializers import BookListSerializer
 
 
 class IndexView(View):
     template_name = "index.html"
-    
+
     def get(self, request):
         return render(request, self.template_name)
 
@@ -52,8 +44,8 @@ class BookListView(ListView):
         return context
 
 
-class BookCreateView(SuccessMessageMixin, View):
-    form_class = BookForm
+class BookCreateView(View):
+    form_class = BookCreateForm
     template_name = "book_create.html"
 
     def get(self, request, *args, **kwargs):
@@ -63,19 +55,22 @@ class BookCreateView(SuccessMessageMixin, View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            authors = form.cleaned_data.pop("authors")
-            book = form.save()
-            book.add_authors(authors)
-            book.save()
+            self.add_book(form)
             messages.success(request, "Your book has been saved!")
             return redirect("book_list")
         else:
             return render(request, self.template_name, {"form": form})
 
+    def add_book(self, form):
+        authors = form.cleaned_data.pop("authors")
+        book = form.save()
+        book.add_authors(authors)
+        book.save()
+
 
 class BookUpdateView(SuccessMessageMixin, UpdateView):
     model = Book
-    form_class = BookForm
+    form_class = BookUpdateForm
     template_name = "book_update.html"
     success_message = "Book has been updated successfully"
 
@@ -98,25 +93,31 @@ class BookDeleteView(DeleteView):
     success_url = reverse_lazy("book_list")
 
 
-class BookSearchView(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
+class BookSearchView(View):
+    form_class = BookSearchForm
     template_name = "book_search.html"
 
-    def get(self, request):
-        serializer = SearchBookSerializer()
-        return Response({"serializer": serializer})
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
 
-    def post(self, request):
-        template = loader.get_template("book_search_result.html")
-        response = google_api.make_url_call(request.data)
-        if response.get("items"):
-            data = google_api.parse_response(response)
-            serializer = SearchBookResultsListSerializer(data, many=True)
-
-            context = {"data": serializer.data}
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            template = loader.get_template("book_search_result.html")
+            books = self.get_books(form.cleaned_data)
+            context = {"data": books}
             return HttpResponse(template.render(context, request))
         else:
-            return HttpResponse(template.render({"data": []}, request))
+            return render(request, self.template_name, {"form": form})
+
+    def get_books(self, data):
+        response = google_api.make_url_call(data)
+        if response.get("items"):
+            data = google_api.parse_response(response)
+            return data
+        else:
+            return []
 
 
 class BookSearchResultsImportView(View):
@@ -124,22 +125,25 @@ class BookSearchResultsImportView(View):
         if not Book.objects.filter(isbn=isbn).exists():
             record = cache.get(isbn)
             if record:
-                book = Book.objects.create(
-                    title=record["title"],
-                    publication_date=record["publication_date"],
-                    isbn=isbn,
-                    page_count=record["page_count"],
-                    cover_photo=record["cover_photo_url"],
-                    publication_language=record["publication_language"],
-                )
-                book.add_authors(record["authors"])
-                book.save()
+                self.add_book(isbn, record)
                 messages.success(request, "Your book has been saved!")
             else:
                 messages.info(request, "Query results expired, please try again.")
         else:
             messages.info(request, "This book already exists in database.")
         return redirect("book_list")
+
+    def add_book(self, isbn, record):
+        book = Book.objects.create(
+            title=record["title"],
+            publication_date=record["publication_date"],
+            isbn=isbn,
+            page_count=record["page_count"],
+            cover_photo=record["cover_photo_url"],
+            publication_language=record["publication_language"],
+        )
+        book.add_authors(record["authors"])
+        book.save()
 
 
 class RESTBookListView(ListAPIView):

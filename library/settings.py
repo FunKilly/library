@@ -31,6 +31,7 @@ DEBUG = os.environ.get("DEBUG", default="0")
 
 ALLOWED_HOSTS = ["*"]
 
+ATOMIC_REQUESTS = True
 
 # Application definition
 
