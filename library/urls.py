@@ -23,9 +23,11 @@ from books.views import (
     BookSearchView,
     BookUpdateView,
     RESTBookListView,
+    IndexView
 )
 
 urlpatterns = [
+    path("", IndexView.as_view(), name="index"),
     path("api/books", RESTBookListView.as_view(), name="rest_book_list"),
     path("books/", BookListView.as_view(), name="book_list"),
     path("books/add/", BookCreateView.as_view(), name="book_create"),

@@ -27,6 +27,13 @@ from .serializers import (
 )
 
 
+class IndexView(View):
+    template_name = "index.html"
+    
+    def get(self, request):
+        return render(request, self.template_name)
+
+
 class BookListView(ListView):
     template_name = "book_list.html"
     model = Book
