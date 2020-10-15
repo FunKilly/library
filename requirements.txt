@@ -9,6 +9,8 @@ asgiref==3.2.10           # via django
 attrs==20.1.0             # via black
 autoflake==1.4            # via -r requirements.in
 black==19.10b0            # via -r requirements.in
+certifi==2020.6.20        # via requests
+chardet==3.0.4            # via requests
 click==7.1.2              # via black
 dj_database_url==0.5.0    # via -r requirements.in
 django-crispy-forms==1.9.2  # via -r requirements.in
@@ -16,6 +18,7 @@ django-filter==2.4.0      # via -r requirements.in
 django==3.0.4             # via -r requirements.in, django-filter, djangorestframework
 djangorestframework==3.11.0  # via -r requirements.in
 gunicorn==19.9.0          # via -r requirements.in
+idna==2.10                # via requests
 invoke==1.4.1             # via -r requirements.in
 isort==4.3.21             # via -r requirements.in
 pathspec==0.8.0           # via black
@@ -23,6 +26,8 @@ psycopg2-binary==2.8.4    # via -r requirements.in
 pyflakes==2.2.0           # via autoflake
 pytz==2020.1              # via django
 regex==2020.7.14          # via black
+requests==2.24.0          # via -r requirements.in
 sqlparse==0.3.1           # via django
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
+urllib3==1.25.10          # via requests

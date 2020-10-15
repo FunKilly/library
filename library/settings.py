@@ -24,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", default="foo")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", default="")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", default="0")
@@ -44,7 +45,8 @@ INSTALLED_APPS = [
     "books.apps.BooksConfig",
     # Third party apps
     "crispy_forms",
-    'django_filters',
+    "django_filters",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -96,7 +98,8 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"]
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "PAGE_SIZE": 10,
 }
 
 db_from_env = dj_database_url.config()

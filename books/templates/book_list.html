@@ -6,7 +6,7 @@
             <h2>Books  </h2>
         </div>
         <div class="col-6 row justify-content-end">
-            <button type="submit" class="btn btn-primary" style="margin:10px">Add book</button>
+            <a class="btn btn-info" role="button" href="/books/add"  style="margin:10px">Add book</a>
         </div>
     </div>
     <table class="table">
@@ -21,7 +21,7 @@
             <th></th>
             <th></th>
         </tr>
-        {% for book in filter.qs %}
+        {% for book in context %}
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
@@ -40,9 +40,9 @@
         {% endfor %}
     </table>
 
-    <form method="get">
+    <form method="GET">
         {% csrf_token %}
-        {{ filter.form|crispy }}   
+        {{ filterset.form|crispy }}   
         
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
@@ -68,4 +68,5 @@
             </ul>
         {% endif %}
     </div>
+    
 {% endblock %}

@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+
+{% load rest_framework %}
 {% block content %}
   <h2>Add book</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form|crispy }}
+        {% render_form serializer %}
         <button type="submit" class="btn btn-primary">Add book</button>
         <a class="btn btn-info" role="button" href="/books">Go back</a>
     </form>
   </br>
-  {% if messages %}
+    {% if messages %}
       <div class="alert alert-success" role="alert">
           <ul class="messages">
               {% for message in messages %}
@@ -17,5 +18,5 @@
               {% endfor %}
           </ul>
       </div>
-  {% endif %}
+    {% endif %}
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% block content %}
+  {% if data %}
+    <h2>Top search results</h2>
+    <table class="table">
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Publication date</th>
+                <th>ISBN number</th>
+                <th>Number of pages</th>
+                <th>Cover photo url</th>
+                <th>Publication language</th>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for book in data %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.authors }}</td>
+                    <td>{{ book.publication_date }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.page_count }}</td>
+                    <td>{{ book.cover_photo_url }}</td>
+                    <td>{{ book.publication_language }}</td>
+                    <td>
+                        <a class="btn btn-info" role="button" href="/books/{{ book.id }}/update">Modify</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>0 records found</h2>
+    {% endif %}
+{% endblock %}

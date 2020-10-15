@@ -20,6 +20,8 @@ from books.views import (
     BookDeleteView,
     BookListView,
     BookUpdateView,
+    ImportBookSearchResultsView,
+    ImportBookSearchView,
     RESTBookListView,
 )
 
@@ -29,4 +31,10 @@ urlpatterns = [
     path("books/add/", BookCreateView.as_view(), name="book-create"),
     path("books/<pk>/update", BookUpdateView.as_view(), name="book-update"),
     path("books/<pk>/delete", BookDeleteView.as_view(), name="book-delete"),
+    path("books/search", ImportBookSearchView.as_view(), name="book-search"),
+    path(
+        "books/search-result",
+        ImportBookSearchResultsView.as_view(),
+        name="book-search-result-list",
+    ),
 ]
