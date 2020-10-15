@@ -13,7 +13,6 @@
                 <th>Cover photo url</th>
                 <th>Publication language</th>
                 <th></th>
-                <th></th>
             </tr>
             {% for book in data %}
                 <tr>
@@ -25,7 +24,8 @@
                     <td>{{ book.cover_photo_url }}</td>
                     <td>{{ book.publication_language }}</td>
                     <td>
-                        <a class="btn btn-info" role="button" href="/books/{{ book.id }}/update">Modify</a>
+
+                        <a class="btn btn-info" role="button" href="search-result/{{ book.isbn }}/add">Add</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -7,12 +7,12 @@ from .models import Book
 
 class ApiBookFilter(FilterSet):
     publication_date = filters.DateFromToRangeFilter(field_name="publication_date")
+    authors = filters.Filter(field_name="authors__name", lookup_expr="icontains")
 
     class Meta:
         model = Book
         fields = {
             "title": ["icontains"],
-            "author__name": ["icontains"],
             "publication_language": ["icontains"],
         }
 

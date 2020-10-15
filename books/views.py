@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.cache import cache
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
@@ -15,12 +16,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import ApiBookFilter, BookFilter
+from .forms import BookForm
 from .integrations import google_api
 from .models import Book
 from .serializers import (
     BookCreateSerializer,
     BookListSerializer,
-    SearchBookResultsSerializer,
+    SearchBookResultsListSerializer,
     SearchBookSerializer,
 )
 
@@ -43,44 +45,53 @@ class BookListView(ListView):
         return context
 
 
-class BookCreateView(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
+class BookCreateView(SuccessMessageMixin, View):
+    form_class = BookForm
     template_name = "book_create.html"
 
-    def get(self, request):
-        serializer = BookCreateSerializer()
-        return Response({"serializer": serializer})
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
 
-    def post(self, request):
-        serializer = BookCreateSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response({"serializer": serializer})
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            authors = form.cleaned_data.pop("authors")
+            book = form.save()
+            book.add_authors(authors)
+            book.save()
+            messages.success(request, "Your book has been saved!")
+            return redirect("book_list")
         else:
-            serializer.save()
-            messages.success(request, "Your data has been saved!")
-            context = {"serializer": BookCreateSerializer()}
-            return render(request, "book_create.html", context)
+            return render(request, self.template_name, {"form": form})
 
 
 class BookUpdateView(SuccessMessageMixin, UpdateView):
     model = Book
+    form_class = BookForm
     template_name = "book_update.html"
-    fields = "__all__"
     success_message = "Book has been updated successfully"
 
     def get_success_url(self):
         self.kwargs["pk"]
-        return reverse_lazy("book-update", kwargs={"pk": self.kwargs["pk"]})
+        return reverse_lazy("book_update", kwargs={"pk": self.kwargs["pk"]})
+
+    def form_valid(self, form):
+        authors = form.cleaned_data.pop("authors")
+        instance = form.save(commit=False)
+        if authors:
+            instance.add_authors(authors)
+        return super(BookUpdateView, self).form_valid(form)
 
 
 class BookDeleteView(DeleteView):
     model = Book
     template_name = "book_confirm_delete.html"
     fields = "__all__"
-    success_url = reverse_lazy("book-list")
+    success_url = reverse_lazy("book_list")
 
 
-class ImportBookSearchView(APIView):
+class BookSearchView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "book_search.html"
 
@@ -90,11 +101,10 @@ class ImportBookSearchView(APIView):
 
     def post(self, request):
         template = loader.get_template("book_search_result.html")
-
         response = google_api.make_url_call(request.data)
         if response.get("items"):
             data = google_api.parse_response(response)
-            serializer = SearchBookResultsSerializer(data, many=True)
+            serializer = SearchBookResultsListSerializer(data, many=True)
 
             context = {"data": serializer.data}
             return HttpResponse(template.render(context, request))
@@ -102,17 +112,27 @@ class ImportBookSearchView(APIView):
             return HttpResponse(template.render({"data": []}, request))
 
 
-class ImportBookSearchResultsView(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "book_search_result.html"
-
-    def get(self, request):
-        serializer = SearchBookResultsSerializer(request.data, many=True)
-        return Response({"data": serializer})
-
-    def post(self, request):
-
-        return redirect("book-search-result-list", context={"data": serializer.data})
+class BookSearchResultsImportView(View):
+    def get(self, request, isbn):
+        if not Book.objects.filter(isbn=isbn).exists():
+            record = cache.get(isbn)
+            if record:
+                book = Book.objects.create(
+                    title=record["title"],
+                    publication_date=record["publication_date"],
+                    isbn=isbn,
+                    page_count=record["page_count"],
+                    cover_photo=record["cover_photo_url"],
+                    publication_language=record["publication_language"],
+                )
+                book.add_authors(record["authors"])
+                book.save()
+                messages.success(request, "Your book has been saved!")
+            else:
+                messages.info(request, "Query results expired, please try again.")
+        else:
+            messages.info(request, "This book already exists in database.")
+        return redirect("book_list")
 
 
 class RESTBookListView(ListAPIView):
@@ -120,4 +140,4 @@ class RESTBookListView(ListAPIView):
     serializer_class = BookListSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ApiBookFilter
-    search_fields = ["title", "author__name", "publication_language"]
+    search_fields = ["title", "authors__name", "publication_language"]

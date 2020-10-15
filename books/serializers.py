@@ -1,26 +1,29 @@
 from rest_framework import serializers
 
-from .models import Book
+from .models import Author, Book
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = ["name"]
 
 
 class BookListSerializer(serializers.ModelSerializer):
-    author_name = serializers.SerializerMethodField()
+    authors = AuthorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
         fields = (
             "id",
             "title",
-            "author_name",
+            "authors",
             "publication_date",
             "isbn",
             "page_count",
             "cover_photo",
             "publication_language",
         )
-
-    def get_author_name(self, obj):
-        return obj.author.name
 
 
 class SearchBookSerializer(serializers.Serializer):
@@ -30,22 +33,24 @@ class SearchBookSerializer(serializers.Serializer):
     general = serializers.CharField(max_length=50)
 
 
-class SearchBookResultsSerializer(serializers.Serializer):
+class SearchBookResultsListSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=50)
     authors = serializers.CharField(max_length=100)
     isbn = serializers.CharField(max_length=20)
     publication_language = serializers.CharField(max_length=10)
     publication_date = serializers.DateField()
-    cover_photo_url = serializers.CharField(max_length=100)
+    cover_photo_url = serializers.URLField(max_length=100)
     page_count = serializers.IntegerField()
 
 
 class BookCreateSerializer(serializers.ModelSerializer):
+    authors = serializers.CharField(max_length=100)
+
     class Meta:
         model = Book
         fields = (
             "title",
-            "author",
+            "authors",
             "publication_date",
             "isbn",
             "page_count",

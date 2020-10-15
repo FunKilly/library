@@ -19,22 +19,22 @@ from books.views import (
     BookCreateView,
     BookDeleteView,
     BookListView,
+    BookSearchResultsImportView,
+    BookSearchView,
     BookUpdateView,
-    ImportBookSearchResultsView,
-    ImportBookSearchView,
     RESTBookListView,
 )
 
 urlpatterns = [
-    path("api/books", RESTBookListView.as_view(), name="rest-book-list"),
-    path("books/", BookListView.as_view(), name="book-list"),
-    path("books/add/", BookCreateView.as_view(), name="book-create"),
-    path("books/<pk>/update", BookUpdateView.as_view(), name="book-update"),
-    path("books/<pk>/delete", BookDeleteView.as_view(), name="book-delete"),
-    path("books/search", ImportBookSearchView.as_view(), name="book-search"),
+    path("api/books", RESTBookListView.as_view(), name="rest_book_list"),
+    path("books/", BookListView.as_view(), name="book_list"),
+    path("books/add/", BookCreateView.as_view(), name="book_create"),
+    path("books/<pk>/update", BookUpdateView.as_view(), name="book_update"),
+    path("books/<pk>/delete", BookDeleteView.as_view(), name="book_delete"),
+    path("books/search", BookSearchView.as_view(), name="book_search"),
     path(
-        "books/search-result",
-        ImportBookSearchResultsView.as_view(),
-        name="book-search-result-list",
+        "books/search-result/<isbn>/add",
+        BookSearchResultsImportView.as_view(),
+        name="book_search_results_import",
     ),
 ]

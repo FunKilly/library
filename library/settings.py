@@ -99,7 +99,6 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    "PAGE_SIZE": 10,
 }
 
 db_from_env = dj_database_url.config()
@@ -117,6 +116,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
+
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache",}}
 
 
 # Internationalization

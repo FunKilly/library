@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="row">
-        <div class="col-6">
-            <h2>Books  </h2>
-        </div>
-        <div class="col-6 row justify-content-end">
-            <a class="btn btn-info" role="button" href="/books/add"  style="margin:10px">Add book</a>
-        </div>
-    </div>
+    <h2>Books  </h2>
+
+    {% if messages %}
+      <div class="alert alert-success" role="alert">
+          <ul class="messages">
+              {% for message in messages %}
+                  {{ message }}
+              {% endfor %}
+          </ul>
+      </div>
+    {% endif %}
+    
     <table class="table">
         <tr>
             <th>Title</th>
@@ -24,11 +28,20 @@
         {% for book in context %}
             <tr>
                 <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
+                <td>
+                {% for author in book.authors.all %}
+                    {{ author }}</br>
+                {% endfor %}
+                </td>
                 <td>{{ book.publication_date }}</td>
                 <td>{{ book.isbn }}</td>
                 <td>{{ book.page_count }}</td>
-                <td>{{ book.cover_photo }}</td>
+                <td>
+                    {% if book.cover_photo %}    
+                        <a href="{{ book.cover_photo }}" target="_blank">url</td>
+                    {% else %}
+                        
+                    {% endif %}
                 <td>{{ book.publication_language }}</td>
                 <td>
                     <a class="btn btn-info" role="button" href="/books/{{ book.id }}/update">Modify</a>
@@ -39,13 +52,6 @@
             </tr>
         {% endfor %}
     </table>
-
-    <form method="GET">
-        {% csrf_token %}
-        {{ filterset.form|crispy }}   
-        
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
 
     <div class="row justify-content-center">
         {% if is_paginated %}
@@ -68,5 +74,14 @@
             </ul>
         {% endif %}
     </div>
+
+    <form method="GET">
+        {% csrf_token %}
+        {{ filterset.form|crispy }}   
+        
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    
     
 {% endblock %}

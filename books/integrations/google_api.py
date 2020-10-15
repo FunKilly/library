@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from django.core.cache import cache
 
 
 def make_url_call(params):
@@ -71,4 +72,21 @@ def parse_response(response):
 
         book_records.append(book_record)
 
+    add_to_cache(book_records)
     return book_records
+
+
+def add_to_cache(records):
+    for record in records:
+        cache.set(
+            record["isbn"],
+            {
+                "title": record["title"],
+                "authors": record["authors"],
+                "publication_date": record["publication_date"],
+                "publication_language": record["publication_language"],
+                "cover_photo_url": record["cover_photo_url"],
+                "page_count": record["page_count"],
+            },
+            600,
+        )
