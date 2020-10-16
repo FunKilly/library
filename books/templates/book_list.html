@@ -44,10 +44,10 @@
                     {% endif %}
                 <td>{{ book.publication_language }}</td>
                 <td>
-                    <a class="btn btn-info" role="button" href="/books/{{ book.id }}/update">Modify</a>
+                    <a class="btn btn-info" role="button" href="/books/{{ book.id }}/update/">Modify</a>
                 </td>
                 <td>
-                    <a class="btn btn-danger" role="button" href="/books/{{ book.id }}/delete">Delete</a>
+                    <a class="btn btn-danger" role="button" href="/books/{{ book.id }}/delete/">Delete</a>
                 </td>
             </tr>
         {% endfor %}
@@ -74,7 +74,7 @@
             </ul>
         {% endif %}
     </div>
-
+    <h2>Search for books in library</h2>
     <form method="GET">
         {% csrf_token %}
         {{ filterset.form|crispy }}   

@@ -17,6 +17,7 @@ django-crispy-forms==1.9.2  # via -r requirements.in
 django-filter==2.4.0      # via -r requirements.in
 django==3.0.4             # via -r requirements.in, django-filter, djangorestframework
 djangorestframework==3.11.0  # via -r requirements.in
+envparse==0.2.0           # via -r requirements.in
 gunicorn==19.9.0          # via -r requirements.in
 idna==2.10                # via requests
 invoke==1.4.1             # via -r requirements.in

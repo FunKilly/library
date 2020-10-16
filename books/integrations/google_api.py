@@ -36,7 +36,7 @@ def parse_response(response):
     for book in response["items"][:10]:
         record = book["volumeInfo"]
 
-        # If the data lacks one of this crucial information, loop the loop goes to the next record
+        # If the data lacks one of this crucial information, the loop goes to the next record
         if not all(
             [
                 record.get("title"),

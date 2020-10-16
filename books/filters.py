@@ -5,7 +5,7 @@ from django_filters.widgets import RangeWidget
 from .models import Book
 
 
-class ApiBookFilter(FilterSet):
+class BaseBookFilter(FilterSet):
     publication_date = filters.DateFromToRangeFilter(field_name="publication_date")
     authors = filters.Filter(field_name="authors__name", lookup_expr="icontains")
 
@@ -17,7 +17,11 @@ class ApiBookFilter(FilterSet):
         }
 
 
-class BookFilter(ApiBookFilter):
+class ApiBookFilter(BaseBookFilter):
+    pass
+
+
+class BookFilter(BaseBookFilter):
     publication_date = filters.DateFromToRangeFilter(
         field_name="publication_date",
         widget=RangeWidget(attrs={"placeholder": "YYYY-MM-DD"}),

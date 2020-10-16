@@ -14,6 +14,7 @@ import os
 import pathlib
 
 import dj_database_url
+from envparse import env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,11 +24,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", default="foo")
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", default="")
+SECRET_KEY = env("SECRET_KEY", default="secret_key")
+GOOGLE_API_KEY = env("GOOGLE_API_KEY", default="google_api_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", default="0")
+DEBUG = env("DEBUG", default="True", cast=bool)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -87,14 +88,14 @@ WSGI_APPLICATION = "library.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get(
+        "ENGINE": env(
             "DATABASE_BACKEND", default="django.db.backends.postgresql_psycopg2"
         ),
-        "NAME": os.environ.get("POSTGRES_DB", default="postgres"),
-        "HOST": os.environ.get("POSTGRES_HOST", default="db"),
-        "USER": os.environ.get("POSTGRES_USER", default="postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", default="postgres"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "NAME": env("POSTGRES_DB", default="postgres"),
+        "HOST": env("POSTGRES_HOST", default="db"),
+        "USER": env("POSTGRES_USER", default="postgres"),
+        "PASSWORD": env("POSTGRES_PASSWORD", default="postgres"),
+        "PORT": env("POSTGRES_PORT", default="5432"),
     },
 }
 
@@ -140,18 +141,10 @@ USE_TZ = True
 
 PUBLIC_ROOT = pathlib.Path(BASE_DIR, "public")
 
-MEDIA_ROOT = os.environ.get(
-    "MEDIA_ROOT", default=str(pathlib.Path(PUBLIC_ROOT, "media")) + "/"
-)
-STATIC_ROOT = os.environ.get(
-    "STATIC_ROOT", default=str(pathlib.Path(PUBLIC_ROOT, "static")) + "/"
-)
+MEDIA_ROOT = env("MEDIA_ROOT", default=str(pathlib.Path(PUBLIC_ROOT, "media")) + "/")
+STATIC_ROOT = env("STATIC_ROOT", default=str(pathlib.Path(PUBLIC_ROOT, "static")) + "/")
 
-MEDIA_URL = os.environ.get(
-    "MEDIA_URL", default=str(pathlib.Path(PUBLIC_ROOT, "media")) + "/"
-)
-STATIC_URL = os.environ.get(
-    "STATIC_URL", default=str(pathlib.Path(PUBLIC_ROOT, "static")) + "/"
-)
+MEDIA_URL = env("MEDIA_URL", default=str(pathlib.Path(PUBLIC_ROOT, "media")) + "/")
+STATIC_URL = env("STATIC_URL", default=str(pathlib.Path(PUBLIC_ROOT, "static")) + "/")
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
