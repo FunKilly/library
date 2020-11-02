@@ -30,7 +30,7 @@
                 <td>{{ book.title }}</td>
                 <td>
                 {% for author in book.authors.all %}
-                    {{ author }}</br>
+                    {{ author }}<br>
                 {% endfor %}
                 </td>
                 <td>{{ book.publication_date }}</td>

@@ -27,6 +27,7 @@ class BookUpdateForm(BookForm):
     authors = forms.CharField(
         help_text="Enter authors if u want to change it. Separate multiple authors with a comma.",
         required=False,
+        max_length=300,
     )
 
 

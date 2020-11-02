@@ -30,16 +30,26 @@ class Book(models.Model):
         return f'"{self.title}" by {", ".join(authors_list)}'
 
     def add_authors(self, authors):
-        author_objects = []
-        for author in authors.split(", "):
-            author_object = Author.objects.filter(name=author).first()
-            if author_object:
-                author_objects.append(author_object)
-            else:
-                author_object = Author.objects.create(name=author)
-                author_objects.append(author_object)
+        if authors in [None, ""]:
+            unknown_author, _ = Author.objects.get_or_create(name="Unknown")
+            self.authors.add(unknown_author)
+        else:
+            author_objects = []
+            authors = self.extract_authors(authors)
+            for author in authors:
+                author_object = Author.objects.filter(name=author).first()
+                if author_object:
+                    author_objects.append(author_object)
+                else:
+                    author_object = Author.objects.create(name=author)
+                    author_objects.append(author_object)
 
-        self.authors.set(author_objects)
+            self.authors.set(author_objects)
+
+    @staticmethod
+    def extract_authors(authors):
+        authors = [author.rstrip().lstrip() for author in authors.split(",")]
+        return authors
 
 
 class BookAuthor(models.Model):

@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
@@ -44,26 +44,22 @@ class BookListView(ListView):
         return context
 
 
-class BookCreateView(View):
+class BookCreateView(CreateView):
     form_class = BookCreateForm
     template_name = "book_create.html"
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class()
-        return render(request, self.template_name, {"form": form})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            self.add_book(form)
+            authors = form.cleaned_data.pop("authors")
+            book = form.save()
+            self.add_book(book, authors)
             messages.success(request, "Your book has been saved!")
             return redirect("book_list")
         else:
             return render(request, self.template_name, {"form": form})
 
-    def add_book(self, form):
-        authors = form.cleaned_data.pop("authors")
-        book = form.save()
+    def add_book(self, book, authors):
         book.add_authors(authors)
         book.save()
 

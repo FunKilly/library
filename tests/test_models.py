@@ -38,3 +38,21 @@ class TestBookModel(TestCase):
         book_authors = [author.name for author in book.authors.all()]
 
         self.assertEqual(book_authors, authors.split(", "))
+
+    def test_empty_authors_string(self):
+        book = Book.objects.create(
+            title="one",
+            publication_date="1970-01-01",
+            isbn="12345x",
+            page_count=100,
+            cover_photo="www.google.pl",
+            publication_language="pl",
+        )
+        authors = ""
+
+        book.add_authors(authors)
+
+        unknown_author = Author.objects.filter(name="Unknown").first()
+        book_author = book.authors.first()
+
+        self.assertEqual(book_author, unknown_author)

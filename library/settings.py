@@ -32,7 +32,6 @@ DEBUG = env("DEBUG", default="True", cast=bool)
 
 ALLOWED_HOSTS = ["*"]
 
-ATOMIC_REQUESTS = True
 
 # Application definition
 
@@ -96,6 +95,7 @@ DATABASES = {
         "USER": env("POSTGRES_USER", default="postgres"),
         "PASSWORD": env("POSTGRES_PASSWORD", default="postgres"),
         "PORT": env("POSTGRES_PORT", default="5432"),
+        "ATOMIC_REQUESTS": True,
     },
 }
 
